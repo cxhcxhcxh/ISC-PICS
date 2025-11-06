@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISC PICS 吃谷一族 - 让所有看到谷子的人，都能心情愉悦</title>
+    <style>
+        :root {
+            --primary-color: #FF6600;
+            --dark-bg: #121212;
+            --darker-bg: #0A0A0A;
+            --light-text: #FFFFFF;
+            --medium-text: #AAAAAA;
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 页头样式 */
+        header {
+            position: relative;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .header-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.7;
+        }
+
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(18,18,18,0.3), rgba(18,18,18,0.8));
+            z-index: -1;
+        }
+
+        .header-content {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .main-title {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+            letter-spacing: 4px;
+            animation: pulse 3s infinite;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--medium-text);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* 主要功能区样式 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+            justify-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: var(--darker-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 102, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .panel-title i {
+            margin-right: 10px;
+        }
+
+        /* 上传区域样式 */
+        .upload-area {
+            border: 2px dashed rgba(255, 102, 0, 0.5);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(255, 102, 0, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: var(--medium-text);
+            font-size: 0.9rem;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-btn:hover {
+            background-color: #e55c00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+        }
+
+        .upload-btn i {
+            margin-right: 8px;
+        }
+
+        /* 画框样式 */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .canvas-frame {
+            width: 100%;
+            height: 0;
+            padding-bottom: 11.11%; /* 9:1比例 */
+            background-color: black;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        #previewCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: move;
+        }
+
+        .canvas-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background-color: rgba(255, 102, 0, 0.2);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+            min-width: 80px;
+        }
+
+        .control-btn:hover {
+            background-color: rgba(255, 102, 0, 0.3);
+        }
+
+        .control-btn i {
+            margin-right: 5px;
+        }
+
+        /* 参数控制样式 */
+        .param-control {
+            margin-bottom: 20px;
+        }
+
+        .param-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .param-name {
+            color: var(--medium-text);
+        }
+
+        .param-value {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .slider-container {
+            position: relative;
+            height: 30px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 102, 0, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+            border: none;
+        }
+
+        /* 操作按钮样式 */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .action-btn:hover {
+            background-color: #e55c00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+        }
+
+        .action-btn i {
+            margin-right: 8px;
+        }
+
+        .action-btn.secondary {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .action-btn.secondary:hover {
+            background-color: rgba(255, 102, 0, 0.1);
+        }
+
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--medium-text);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 50px;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--darker-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 102, 0, 0.3);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--medium-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--primary-color);
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* 加载动画 */
+        .loader {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 102, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 成功提示 */
+        .success-message {
+            display: none;
+            background-color: rgba(0, 200, 0, 0.2);
+            color: #4CAF50;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-top: 20px;
+            border: 1px solid rgba(0, 200, 0, 0.3);
+        }
+
+        /* 处理预览区域 */
+        .process-preview {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .process-preview-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <video class="header-video" autoplay muted loop>
+            <source src="file:///Users/chenxiaohua/Desktop/ISC%20PICS.mp4" type="video/mp4">
+            您的浏览器不支持视频标签。
+        </video>
+        <div class="header-overlay"></div>
+        <div class="header-content">
+            <h1 class="main-title">ISC PICS</h1>
+            <p class="subtitle">让所有看到谷子的人，都能心情愉悦</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- 左侧：上传和裁剪区域 -->
+            <div class="panel">
+                <h2 class="panel-title">
+                    <i>📁</i> 上传图片
+                </h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📸</div>
+                    <p>点击或拖拽图片到此处</p>
+                    <p class="upload-text">请上传喜欢的谷子图像，图形越简洁清晰，显示效果越好</p>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                <button class="upload-btn" id="confirmUpload">
+                    <i>✓</i> 确认上传
+                </button>
+
+                <div class="canvas-container">
+                    <div class="canvas-frame">
+                        <canvas id="previewCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="canvas-controls">
+                    <button class="control-btn" id="moveLeft"><i>←</i> 左移</button>
+                    <button class="control-btn" id="moveRight"><i>→</i> 右移</button>
+                    <button class="control-btn" id="moveUp"><i>↑</i> 上移</button>
+                    <button class="control-btn" id="moveDown"><i>↓</i> 下移</button>
+                    <button class="control-btn" id="zoomIn"><i>+</i> 放大</button>
+                    <button class="control-btn" id="zoomOut"><i>-</i> 缩小</button>
+                </div>
+            </div>
+
+            <!-- 右侧：参数调整区域 -->
+            <div class="panel">
+                <h2 class="panel-title">
+                    <i>🎛️</i> 图像处理
+                </h2>
+
+                <div class="param-control">
+                    <div class="param-label">
+                        <span class="param-name">R值</span>
+                        <span class="param-value" id="rValue">255</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="255" value="255" class="slider" id="rSlider">
+                    </div>
+                </div>
+
+                <div class="param-control">
+                    <div class="param-label">
+                        <span class="param-name">G值</span>
+                        <span class="param-value" id="gValue">65</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="255" value="65" class="slider" id="gSlider">
+                    </div>
+                </div>
+
+                <div class="param-control">
+                    <div class="param-label">
+                        <span class="param-name">像素化级别</span>
+                        <span class="param-value" id="pixelValue">5</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="20" value="5" class="slider" id="pixelSlider">
+                    </div>
+                </div>
+
+                <div class="param-control">
+                    <div class="param-label">
+                        <span class="param-name">对比度</span>
+                        <span class="param-value" id="contrastValue">150%</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="100" max="300" value="150" class="slider" id="contrastSlider">
+                    </div>
+                </div>
+
+                <div class="param-control">
+                    <div class="param-label">
+                        <span class="param-name">亮度</span>
+                        <span class="param-value" id="brightnessValue">150%</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="100" max="300" value="150" class="slider" id="brightnessSlider">
+                    </div>
+                </div>
+
+                <div class="param-control">
+                    <div class="param-label">
+                        <span class="param-name">暗角程度</span>
+                        <span class="param-value" id="vignetteValue">30</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="100" value="30" class="slider" id="vignetteSlider">
+                    </div>
+                </div>
+
+                <div class="loader" id="processingLoader"></div>
+                <div class="success-message" id="successMessage">图片处理完成！</div>
+
+                <div class="action-buttons">
+                    <button class="action-btn" id="processBtn">
+                        <i>⚡</i> 开始处理图片
+                    </button>
+                </div>
+
+                <!-- 处理预览区域 -->
+                <div class="process-preview" id="processPreview">
+                    <h3 class="process-preview-title">处理预览</h3>
+                    <div class="canvas-frame">
+                        <canvas id="processCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn secondary" id="previewBtn">
+                        <i>🔍</i> 放大预览
+                    </button>
+                    <button class="action-btn secondary" id="downloadBtn">
+                        <i>💾</i> 下载图片
+                    </button>
+                    <button class="action-btn secondary" id="applyBtn">
+                        <i>🚗</i> 应用到车
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>软件产品创新策划CXH</p>
+    </footer>
+
+    <!-- 模态框用于预览 -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <img src="" alt="预览图片" class="modal-image" id="modalImage">
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let originalImage = null;
+        let processedImage = null;
+        let canvas = document.getElementById('previewCanvas');
+        let processCanvas = document.getElementById('processCanvas');
+        let ctx = canvas.getContext('2d');
+        let processCtx = processCanvas.getContext('2d');
+        let offsetX = 0, offsetY = 0;
+        let scale = 1;
+        let isDragging = false;
+        let lastX, lastY;
+
+        // 初始化Canvas尺寸
+        function initCanvas() {
+            const frame = document.querySelector('.canvas-frame');
+            const rect = frame.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            processCanvas.width = rect.width;
+            processCanvas.height = rect.height;
+            
+            // 设置黑色背景
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            processCtx.fillStyle = '#000000';
+            processCtx.fillRect(0, 0, processCanvas.width, processCanvas.height);
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            initCanvas();
+            
+            // 调整窗口大小时重新初始化Canvas
+            window.addEventListener('resize', initCanvas);
+        });
+
+        // 上传区域事件处理
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const confirmUpload = document.getElementById('confirmUpload');
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary-color)';
+            uploadArea.style.backgroundColor = 'rgba(255, 102, 0, 0.1)';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'rgba(255, 102, 0, 0.5)';
+            uploadArea.style.backgroundColor = 'transparent';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'rgba(255, 102, 0, 0.5)';
+            uploadArea.style.backgroundColor = 'transparent';
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleImageUpload();
+            }
+        });
+
+        fileInput.addEventListener('change', handleImageUpload);
+
+        function handleImageUpload() {
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    originalImage = new Image();
+                    originalImage.onload = function() {
+                        // 重置变换参数
+                        offsetX = 0;
+                        offsetY = 0;
+                        scale = 1;
+                        
+                        // 绘制图像到Canvas
+                        drawImageOnCanvas();
+                        
+                        // 显示确认按钮动画
+                        confirmUpload.style.transform = 'scale(1.1)';
+                        setTimeout(() => {
+                            confirmUpload.style.transform = 'scale(1)';
+                        }, 200);
+                    };
+                    originalImage.src = e.target.result;
+                };
+                
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        // 绘制图像到Canvas
+        function drawImageOnCanvas() {
+            if (!originalImage) return;
+            
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+            
+            // 计算9:1比例下的高度
+            const targetHeight = canvasWidth / 9;
+            
+            // 清除Canvas
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            
+            // 计算缩放和位置
+            const scaledWidth = originalImage.width * scale;
+            const scaledHeight = originalImage.height * scale;
+            
+            // 计算绘制位置（居中并应用偏移）
+            const drawX = (canvasWidth - scaledWidth) / 2 + offsetX;
+            const drawY = (canvasHeight - scaledHeight) / 2 + offsetY;
+            
+            // 绘制图像
+            ctx.drawImage(originalImage, drawX, drawY, scaledWidth, scaledHeight);
+        }
+
+        // 确认上传按钮事件
+        confirmUpload.addEventListener('click', function() {
+            if (!originalImage) {
+                alert('请先上传图片！');
+                return;
+            }
+            
+            // 添加动画效果
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+            
+            // 显示处理预览区域
+            document.getElementById('processPreview').style.display = 'block';
+            
+            // 这里可以添加其他确认后的逻辑
+            console.log('图片已确认上传');
+        });
+
+        // 控制按钮事件
+        document.getElementById('moveLeft').addEventListener('click', function() {
+            offsetX -= 10;
+            drawImageOnCanvas();
+            addButtonEffect(this);
+            updateProcessPreview();
+        });
+
+        document.getElementById('moveRight').addEventListener('click', function() {
+            offsetX += 10;
+            drawImageOnCanvas();
+            addButtonEffect(this);
+            updateProcessPreview();
+        });
+
+        document.getElementById('moveUp').addEventListener('click', function() {
+            offsetY -= 10;
+            drawImageOnCanvas();
+            addButtonEffect(this);
+            updateProcessPreview();
+        });
+
+        document.getElementById('moveDown').addEventListener('click', function() {
+            offsetY += 10;
+            drawImageOnCanvas();
+            addButtonEffect(this);
+            updateProcessPreview();
+        });
+
+        document.getElementById('zoomIn').addEventListener('click', function() {
+            scale *= 1.1;
+            drawImageOnCanvas();
+            addButtonEffect(this);
+            updateProcessPreview();
+        });
+
+        document.getElementById('zoomOut').addEventListener('click', function() {
+            scale /= 1.1;
+            drawImageOnCanvas();
+            addButtonEffect(this);
+            updateProcessPreview();
+        });
+
+        // 图片拖动功能
+        canvas.addEventListener('mousedown', startDrag);
+        canvas.addEventListener('touchstart', startDrag);
+        
+        function startDrag(e) {
+            if (!originalImage) return;
+            
+            isDragging = true;
+            if (e.type === 'mousedown') {
+                lastX = e.clientX;
+                lastY = e.clientY;
+            } else {
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+            }
+            
+            e.preventDefault();
+        }
+        
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag);
+        
+        function drag(e) {
+            if (!isDragging) return;
+            
+            let clientX, clientY;
+            if (e.type === 'mousemove') {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            } else {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+            
+            const deltaX = clientX - lastX;
+            const deltaY = clientY - lastY;
+            
+            offsetX += deltaX;
+            offsetY += deltaY;
+            
+            lastX = clientX;
+            lastY = clientY;
+            
+            drawImageOnCanvas();
+            updateProcessPreview();
+            
+            e.preventDefault();
+        }
+        
+        document.addEventListener('mouseup', endDrag);
+        document.addEventListener('touchend', endDrag);
+        
+        function endDrag() {
+            isDragging = false;
+        }
+
+        // 按钮点击效果
+        function addButtonEffect(button) {
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // 参数滑块事件
+        const rSlider = document.getElementById('rSlider');
+        const gSlider = document.getElementById('gSlider');
+        const pixelSlider = document.getElementById('pixelSlider');
+        const contrastSlider = document.getElementById('contrastSlider');
+        const brightnessSlider = document.getElementById('brightnessSlider');
+        const vignetteSlider = document.getElementById('vignetteSlider');
+
+        // 更新参数值显示
+        rSlider.addEventListener('input', function() {
+            document.getElementById('rValue').textContent = this.value;
+            updateProcessPreview();
+        });
+
+        gSlider.addEventListener('input', function() {
+            document.getElementById('gValue').textContent = this.value;
+            updateProcessPreview();
+        });
+
+        pixelSlider.addEventListener('input', function() {
+            document.getElementById('pixelValue').textContent = this.value;
+            updateProcessPreview();
+        });
+
+        contrastSlider.addEventListener('input', function() {
+            document.getElementById('contrastValue').textContent = this.value + '%';
+            updateProcessPreview();
+        });
+
+        brightnessSlider.addEventListener('input', function() {
+            document.getElementById('brightnessValue').textContent = this.value + '%';
+            updateProcessPreview();
+        });
+
+        vignetteSlider.addEventListener('input', function() {
+            document.getElementById('vignetteValue').textContent = this.value;
+            updateProcessPreview();
+        });
+
+        // 更新处理预览
+        function updateProcessPreview() {
+            if (!originalImage) return;
+            
+            // 绘制当前Canvas内容到处理Canvas
+            processCtx.drawImage(canvas, 0, 0);
+            
+            // 获取图像数据
+            const imageData = processCtx.getImageData(0, 0, processCanvas.width, processCanvas.height);
+            const data = imageData.data;
+            
+            // 应用像素化效果
+            const pixelSize = parseInt(pixelSlider.value);
+            if (pixelSize > 1) {
+                for (let y = 0; y < processCanvas.height; y += pixelSize) {
+                    for (let x = 0; x < processCanvas.width; x += pixelSize) {
+                        // 获取像素块的平均颜色
+                        const pixelIndex = (y * processCanvas.width + x) * 4;
+                        const r = data[pixelIndex];
+                        const g = data[pixelIndex + 1];
+                        const b = data[pixelIndex + 2];
+                        
+                        // 将整个像素块设置为该颜色
+                        for (let dy = 0; dy < pixelSize && y + dy < processCanvas.height; dy++) {
+                            for (let dx = 0; dx < pixelSize && x + dx < processCanvas.width; dx++) {
+                                const index = ((y + dy) * processCanvas.width + (x + dx)) * 4;
+                                data[index] = r;
+                                data[index + 1] = g;
+                                data[index + 2] = b;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 应用B通道归零和RGB调整
+            const rValue = parseInt(rSlider.value);
+            const gValue = parseInt(gSlider.value);
+            
+            for (let i = 0; i < data.length; i += 4) {
+                // 调整R和G通道
+                data[i] = Math.min(255, data[i] * (rValue / 255));
+                data[i + 1] = Math.min(255, data[i + 1] * (gValue / 255));
+                // B通道归零
+                data[i + 2] = 0;
+            }
+            
+            // 应用对比度增强
+            const contrastValue = parseInt(contrastSlider.value) / 100;
+            const contrastFactor = (259 * (contrastValue + 255)) / (255 * (259 - contrastValue));
+            
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = contrastFactor * (data[i] - 128) + 128;
+                data[i + 1] = contrastFactor * (data[i + 1] - 128) + 128;
+                data[i + 2] = contrastFactor * (data[i + 2] - 128) + 128;
+            }
+            
+            // 应用亮度增强
+            const brightnessValue = parseInt(brightnessSlider.value) / 100;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(255, data[i] * brightnessValue);
+                data[i + 1] = Math.min(255, data[i + 1] * brightnessValue);
+                data[i + 2] = Math.min(255, data[i + 2] * brightnessValue);
+            }
+            
+            // 应用暗角效果
+            const vignetteValue = parseInt(vignetteSlider.value) / 100;
+            const centerX = processCanvas.width / 2;
+            const centerY = processCanvas.height / 2;
+            const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
+            
+            for (let y = 0; y < processCanvas.height; y++) {
+                for (let x = 0; x < processCanvas.width; x++) {
+                    const index = (y * processCanvas.width + x) * 4;
+                    const distance = Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+                    const vignette = 1 - (distance / maxDistance) * vignetteValue;
+                    
+                    data[index] = Math.min(255, data[index] * vignette);
+                    data[index + 1] = Math.min(255, data[index + 1] * vignette);
+                    data[index + 2] = Math.min(255, data[index + 2] * vignette);
+                }
+            }
+            
+            // 将处理后的图像数据放回Canvas
+            processCtx.putImageData(imageData, 0, 0);
+            
+            // 保存处理后的图像
+            processedImage = processCanvas.toDataURL('image/png');
+        }
+
+        // 处理图片按钮事件
+        document.getElementById('processBtn').addEventListener('click', function() {
+            if (!originalImage) {
+                alert('请先上传图片！');
+                return;
+            }
+            
+            // 显示加载动画
+            const loader = document.getElementById('processingLoader');
+            const successMessage = document.getElementById('successMessage');
+            loader.style.display = 'block';
+            successMessage.style.display = 'none';
+            
+            // 模拟处理过程
+            setTimeout(() => {
+                // 隐藏加载动画，显示成功消息
+                loader.style.display = 'none';
+                successMessage.style.display = 'block';
+                
+                // 处理图片
+                updateProcessPreview();
+                
+                // 3秒后隐藏成功消息
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }, 1000);
+            
+            // 按钮动画
+            addButtonEffect(this);
+        });
+
+        // 预览按钮事件
+        document.getElementById('previewBtn').addEventListener('click', function() {
+            if (!processedImage && !originalImage) {
+                alert('请先上传并处理图片！');
+                return;
+            }
+            
+            const modal = document.getElementById('previewModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            // 使用处理后的图像或原始图像
+            modalImage.src = processedImage || canvas.toDataURL('image/png');
+            modal.style.display = 'flex';
+            
+            addButtonEffect(this);
+        });
+
+        // 下载按钮事件
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            if (!processedImage && !originalImage) {
+                alert('请先上传并处理图片！');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.download = 'isc-pics-processed.png';
+            link.href = processedImage || canvas.toDataURL('image/png');
+            link.click();
+            
+            addButtonEffect(this);
+        });
+
+        // 应用到车按钮事件
+        document.getElementById('applyBtn').addEventListener('click', function() {
+            if (!processedImage && !originalImage) {
+                alert('请先上传并处理图片！');
+                return;
+            }
+            
+            // 这里应该实现将图片应用到车的逻辑
+            alert('图片已应用到车！');
+            
+            addButtonEffect(this);
+        });
+
+        // 关闭模态框
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('previewModal').style.display = 'none';
+        });
+
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('previewModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
